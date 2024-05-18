@@ -1,0 +1,50 @@
+{% extends 'quizzes/base.html' %}
+{% block title %}Quiz List{% endblock %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3">
+        <h4>Категории</h4>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="#" data-category="all">Все квизы</a></li>
+            {% for category in categories %}
+            <li class="list-group-item"><a href="#" data-category="{{ category.id }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <h4>Квизы</h4>
+        <div id="quiz-list" class="row row-cols-1 row-cols-md-2">
+            {% for quiz in quizzes %}
+            <div class="col mb-4 quiz-card"
+                data-category="{% if quiz.category %}{{ quiz.category.id }}{% else %}all{% endif %}">
+                <div class="card h-100">
+                    {% if quiz.image %}
+                    <img src="{{ quiz.image.url }}" class="card-img-top" alt="{{ quiz.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ quiz.title }}</h5>
+                    </div>
+                    <div class="card-footer"><a href="#" class="btn btn-primary">Пройти квиз</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('a[data-category]').click(function () {
+            var category = $(this).data('category');
+            if (category == 'all') {
+                $('.quiz-card').show();
+            } else {
+                $('.quiz-card').hide();
+                $('.quiz-card[data-category="' + category + '"]').show();
+            }
+        });
+    });
+</script>
+{% endblock %}
