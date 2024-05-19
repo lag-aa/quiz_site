@@ -1,9 +1,33 @@
+# pylint: disable=E1101
+"""
+Views module for the quizzes application.
+
+This module defines the following views:
+- quiz_list: Display a list of quizzes and categories.
+- take_quiz: Display the quiz for taking.
+- save_quiz_answers: Save the answers submitted by the user.
+- quiz_result: Display the results of the taken quiz.
+- manage_quiz: Display a list of quizzes for management purposes.
+- create_quiz: Handle quiz creation.
+- edit_quiz: Handle quiz editing.
+- delete_quiz: Handle quiz deletion.
+"""
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quiz, Category, Answer, Option
 from .forms import QuizForm, QuestionFormSet
 
 
 def quiz_list(request):
+    """
+    Display a list of quizzes and categories.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered quiz list page.
+    """
     quizzes = Quiz.objects.all()
     categories = Category.objects.all()
     context = {"quizzes": quizzes, "categories": categories}
@@ -11,6 +35,16 @@ def quiz_list(request):
 
 
 def take_quiz(request, quiz_id):
+    """
+    Display the quiz for taking.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        quiz_id (int): The ID of the quiz to take.
+
+    Returns:
+        HttpResponse: The rendered take quiz page.
+    """
     quiz = Quiz.objects.get(id=quiz_id)
     questions = quiz.questions.all()
     return render(
@@ -19,6 +53,16 @@ def take_quiz(request, quiz_id):
 
 
 def save_quiz_answers(request, quiz_id):
+    """
+    Save the answers submitted by the user.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        quiz_id (int): The ID of the quiz being taken.
+
+    Returns:
+        HttpResponse: Redirect to the quiz result page or take quiz page.
+    """
     quiz = Quiz.objects.get(id=quiz_id)
     questions = quiz.questions.all()
     if request.method == "POST":
@@ -42,6 +86,16 @@ def save_quiz_answers(request, quiz_id):
 
 
 def quiz_result(request, quiz_id):
+    """
+    Display the results of the taken quiz.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        quiz_id (int): The ID of the quiz taken.
+
+    Returns:
+        HttpResponse: The rendered quiz result page.
+    """
     quiz = Quiz.objects.get(id=quiz_id)
     answers = Answer.objects.filter(question__quiz=quiz)
     score = 0
@@ -100,11 +154,29 @@ def quiz_result(request, quiz_id):
 
 
 def manage_quiz(request):
+    """
+    Display a list of quizzes for management purposes.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered manage quiz page.
+    """
     quizzes = Quiz.objects.all()
     return render(request, "quizzes/manage_quiz.html", {"quizzes": quizzes})
 
 
 def create_quiz(request):
+    """
+    Handle quiz creation.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered create quiz page.
+    """
     if request.method == "POST":
         quiz_form = QuizForm(request.POST, request.FILES)
         question_formset = QuestionFormSet(
@@ -133,6 +205,16 @@ def create_quiz(request):
 
 
 def edit_quiz(request, quiz_id):
+    """
+    Handle quiz editing.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        quiz_id (int): The ID of the quiz to edit.
+
+    Returns:
+        HttpResponse: The rendered edit quiz page.
+    """
     quiz = get_object_or_404(Quiz, id=quiz_id)
 
     if request.method == "POST":
@@ -161,6 +243,16 @@ def edit_quiz(request, quiz_id):
 
 
 def delete_quiz(request, quiz_id):
+    """
+    Handle quiz deletion.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        quiz_id (int): The ID of the quiz to delete.
+
+    Returns:
+        HttpResponse: The rendered delete quiz page.
+    """
     quiz = get_object_or_404(Quiz, id=quiz_id)
     if request.method == "POST":
         quiz.delete()
