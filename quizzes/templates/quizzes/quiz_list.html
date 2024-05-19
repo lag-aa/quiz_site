@@ -23,9 +23,11 @@
                     <img src="{{ quiz.image.url }}" class="card-img-top" alt="{{ quiz.title }}">
                     {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">{{ quiz.title }}</h5>
+                        <h5 class="card-title text-ligth">{{ quiz.title }}</h5>
                     </div>
-                    <div class="card-footer"><a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Пройти квиз</a>
+                    <div class="card-footer">
+                        <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Пройти квиз</a>
+                        <a href="{% url 'quiz_result' quiz.id %}" class="btn btn-info">Результаты</a>
                     </div>
                 </div>
             </div>

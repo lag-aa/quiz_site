@@ -1,0 +1,32 @@
+{% extends 'quizzes/base.html' %}
+{% block title %}Quiz Result{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-12 d-flex align-items-center">
+        <h1>{{ quiz.title }} - Результаты</h1>
+    </div>
+</div>
+<p>Ваш итоговый результат: {{ score }} из {{ total_questions }}</p>
+{% for result in results %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ result.question.text }}</h5>
+            {% if result.question.question_type == 'TEXT' %}
+                <p><strong>Ваш ответ:</strong> {{ result.selected|join:", " }}</p>
+                <p><strong>Правильный ответ:</strong> {{ result.correct|join:", " }}</p>
+            {% else %}
+                {% for option in result.question.options.all %}
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" disabled
+                               {% if option.text in result.selected %} checked {% endif %}>
+                        <label class="form-check-label {% if option.text in result.correct %}text-success{% elif option.text in result.selected %}text-danger{% endif %}">
+                            {{ option.text }}
+                        </label>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
