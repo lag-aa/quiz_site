@@ -19,7 +19,7 @@ db.sqlite3
 *.pgsql
 
 # Media files
-media/
+# media/
 
 # Static files
 staticfiles/
