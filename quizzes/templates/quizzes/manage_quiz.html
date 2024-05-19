@@ -1,0 +1,29 @@
+{% extends 'quizzes/base.html' %}
+{% block title %}Управление Квизами{% endblock %}
+{% block content %}
+
+<h2>Управление Квизами</h2>
+<a href="{% url 'create_quiz' %}" class="btn btn-primary mb-4">Создать Квиз</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for quiz in quizzes %}
+        <tr>
+            <td>{{ quiz.title }}</td>
+            <td>{{ quiz.category.name }}</td>
+            <td>
+                <a href="{% url 'edit_quiz' quiz.id %}" class="btn btn-info btn-sm">Редактировать</a>
+                <a href="{% url 'delete_quiz' quiz.id %}" class="btn btn-danger btn-sm">Удалить</a>
+                <a href="{% url 'quiz_result' quiz.id %}" class="btn btn-secondary btn-sm">Посмотреть результаты</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

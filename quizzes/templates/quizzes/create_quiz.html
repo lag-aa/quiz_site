@@ -1,0 +1,49 @@
+{% extends 'quizzes/base.html' %}
+{% load static %}
+{% block title %}Создать Квиз{% endblock %}
+{% block content %}
+
+<h2>Создать Квиз</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Квиз</h3>
+        </div>
+        <div class="card-body">
+            {{ quiz_form.as_p }}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Вопросы</h3>
+        </div>
+        <div class="card-body">
+            {{ question_formset.management_form }}
+            <div id="questions-container">
+                {% for form in question_formset %}
+                    <div class="formset_row form-group">
+                        {{ form.as_p }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+<script src="{% static "dynamic_formsets/jquery.formset.js" %}" type="text/javascript"> </script>
+<script>
+$(document).ready(function() {
+    var questionFormsetPrefix = 'questions';
+
+    $('#questions-container').formset({
+        prefix: questionFormsetPrefix,
+        formCssClass: 'formset_row',
+        deleteCssClass: 'delete-row'
+    });
+});
+</script>
+{% endblock %}

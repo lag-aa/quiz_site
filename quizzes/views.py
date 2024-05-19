@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Quiz, Category, Answer, Option
+from .forms import QuizForm, QuestionFormSet
 
 
 def quiz_list(request):
     quizzes = Quiz.objects.all()
     categories = Category.objects.all()
     context = {"quizzes": quizzes, "categories": categories}
-
     return render(request, "quizzes/quiz_list.html", context)
 
 
@@ -97,3 +97,72 @@ def quiz_result(request, quiz_id):
             "results": results,
         },
     )
+
+
+def manage_quiz(request):
+    quizzes = Quiz.objects.all()
+    return render(request, "quizzes/manage_quiz.html", {"quizzes": quizzes})
+
+
+def create_quiz(request):
+    if request.method == "POST":
+        quiz_form = QuizForm(request.POST, request.FILES)
+        question_formset = QuestionFormSet(
+            request.POST, request.FILES, prefix="questions"
+        )
+
+        if quiz_form.is_valid() and question_formset.is_valid():
+            quiz = quiz_form.save()
+            questions = question_formset.save(commit=False)
+            for question in questions:
+                question.quiz = quiz
+                question.save()
+            return redirect("manage_quiz")
+    else:
+        quiz_form = QuizForm()
+        question_formset = QuestionFormSet(prefix="questions")
+
+    return render(
+        request,
+        "quizzes/create_quiz.html",
+        {
+            "quiz_form": quiz_form,
+            "question_formset": question_formset,
+        },
+    )
+
+
+def edit_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
+    if request.method == "POST":
+        quiz_form = QuizForm(request.POST, request.FILES, instance=quiz)
+        question_formset = QuestionFormSet(request.POST, instance=quiz)
+
+        if quiz_form.is_valid() and question_formset.is_valid():
+            quiz = quiz_form.save()
+            questions = question_formset.save(commit=False)
+            for question in questions:
+                question.quiz = quiz
+                question.save()
+            return redirect("manage_quiz")
+    else:
+        quiz_form = QuizForm(instance=quiz)
+        question_formset = QuestionFormSet(instance=quiz)
+
+    return render(
+        request,
+        "quizzes/edit_quiz.html",
+        {
+            "quiz_form": quiz_form,
+            "question_formset": question_formset,
+        },
+    )
+
+
+def delete_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    if request.method == "POST":
+        quiz.delete()
+        return redirect("manage_quiz")
+    return render(request, "quizzes/delete_quiz.html", {"quiz": quiz})
