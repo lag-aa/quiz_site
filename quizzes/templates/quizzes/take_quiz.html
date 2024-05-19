@@ -1,0 +1,44 @@
+{% extends 'quizzes/base.html' %}
+{% block title %}Take Quiz{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+    {% if quiz.image %}
+    <div class="col-md-2">
+        <img src="{{ quiz.image.url }}" alt="{{ quiz.title }}" class="img-fluid">
+    </div>
+    {% endif %}
+    <div class="col-md-9 d-flex align-items-center">
+        <h1>{{ quiz.title }}</h1>
+    </div>
+</div>
+<form method="post" action="{% url 'save_quiz_answers' quiz.id %}">
+    {% csrf_token %}
+    {% for question in questions %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ question.text }}</h5>
+            {% if question.question_type == 'TEXT' %}
+            <input type="text" class="form-control" name="question_{{ question.id }}" required>
+            {% elif question.question_type == 'RADIO' %}
+            {% for option in question.options.all %}
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="question_{{ question.id }}" value="{{ option.id }}" required>
+                <label class="form-check-label">{{ option.text }}</label>
+            </div>
+            {% endfor %}
+            {% elif question.question_type == 'CHECKBOX' %}
+            {% for option in question.options.all %}
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="question_{{ question.id }}"
+                    value="{{ option.id }}">
+                <label class="form-check-label">{{ option.text }}</label>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Завершить квиз</button>
+</form>
+{% endblock %}

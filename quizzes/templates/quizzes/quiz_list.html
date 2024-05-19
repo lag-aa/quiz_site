@@ -25,7 +25,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ quiz.title }}</h5>
                     </div>
-                    <div class="card-footer"><a href="#" class="btn btn-primary">Пройти квиз</a>
+                    <div class="card-footer"><a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Пройти квиз</a>
                     </div>
                 </div>
             </div>
